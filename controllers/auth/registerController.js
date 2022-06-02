@@ -1,4 +1,4 @@
-import Joi, { ref } from 'joi';
+import Joi from 'joi';
 import { User} from "../../models";
 import CustomErrorHandler from '../../Services/CustomerrorHandler';
 import bcrypt from 'bcrypt';

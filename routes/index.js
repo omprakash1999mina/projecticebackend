@@ -7,7 +7,6 @@ import {orderController, messagesController, registerController, loginController
 router.post('/register',registerController.register);
 router.post('/login',loginController.login);
 router.post('/message',messagesController.message);
-// router.get('/me', auth ,userController.me);
 router.post('/refresh',refreshController.refresh);
 router.post('/logout',loginController.logout);
 router.post('/product',[auth , admin], productController.store);
@@ -26,17 +25,6 @@ router.get('/orders/:id',[auth ], orderController.getorders);
 // router.get('/user/:id', productController.getProductsOne);
 router.post('/products/cart-items',productController.getProducts);
 router.post('/user',loginController.logout);
- 
-router.get('/',(req,res)=>{
-    res.render('index');
-});
-router.get('/noaccess', (req,res)=>{
-    res.render('noaccess');
-});
-router.get('/user', (req,res)=>{
-    
-    res.render('welcomeLogin');
-});
 
 export default router;
 

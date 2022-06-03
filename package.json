@@ -1,29 +1,31 @@
 {
-  "name": "backend",
+  "name": "rest-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Rest Apis project developed by Om Prakash Bairwa [Royal_IITian] ",
+  "main": "server.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -r esm server.js",
     "start": "node -r esm server.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "OP",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
-    "ejs": "^3.1.7",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
     "esm": "^3.2.25",
     "express": "^4.17.1",
-    "firebase": "^9.8.0",
-    "ioredis": "^5.0.4",
-    "joi": "^17.6.0",
+    "express-ejs-layouts": "^2.5.1",
+    "firebase": "^9.8.2",
+    "ioredis": "^5.0.6",
+    "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.13",
-    "nodemon": "^2.0.16",
-    "redis": "^4.1.0"
+    "mongoose": "^5.12.13"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

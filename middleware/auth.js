@@ -11,10 +11,11 @@ import CustomErrorHandler from "../Services/CustomerrorHandler";
 
         const token = authHeader.split(' ')[1];
         try{
-            const {_id} = await JwtService.verify(token);
+            const {_id, role} = await JwtService.verify(token);
 
             const user = {
                 _id,
+                role
             }
 
             req.user = user;

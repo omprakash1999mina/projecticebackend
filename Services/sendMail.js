@@ -1,8 +1,9 @@
 import axios from "axios";
 import { EMAIL_ADMIN_ID, EMAIL_ADMIN_PASSWORD, EMAIL_API_URL } from '../config'
+import discord from "./discord";
 
 const mailService = {
-    send(userName, type, email, lenderName, lenderEmail) {
+    async send(userName, type, otp, email, lenderName, lenderEmail) {
         const config = {
             headers: {
                 "Content-Type": "application/json"
@@ -12,18 +13,20 @@ const mailService = {
         const data = {
             userName,
             type,
+            otp,
             email,
             lenderName,
             lenderEmail,
-            subject: "Regarding loan approved",
-            company: "LoanCorner PVT LTD",
-            adminId: EMAIL_ADMIN_ID,
-            password: EMAIL_ADMIN_PASSWORD,
+            subject: "Regarding OTP",
+            company: "Tech Developers",
+            adminId: `${EMAIL_ADMIN_ID}`,
+            password: `${EMAIL_ADMIN_PASSWORD}`,
         }
-        axios.post(EMAIL_API_URL, data, config).then((res) => {
-            return res.result.Code;
+        await axios.post(EMAIL_API_URL, data, config).then((res) => {
+            return true;
         }).catch((err) => {
             // console.log(err)
+            discord.SendErrorMessageToDiscord(email, "Send Mail", err);
             console.log("error in sending mail to :" + email)
             return false;
         });

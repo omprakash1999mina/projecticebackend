@@ -1,15 +1,13 @@
-import dotenv  from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
-export const{
+export const {
     APP_PORT,
     DEBUG_MODE,
     DB_URL,
-    APP_URL,
-    WEB_URL,
     JWT_SECRET,
     REFRESH_SECRET,
-    
+
     FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN,
     FIREBASE_PROJECT_ID,
@@ -22,8 +20,10 @@ export const{
     DISCORD_WEBHOOK_ID,
     DISCORD_WEBHOOK_TOKEN,
     DISCORD_SHOULD_WAIT_FOR_RESPONSE,
+
     REDIS_URL,
+    
     EMAIL_API_URL,
     EMAIL_ADMIN_ID,
     EMAIL_ADMIN_PASSWORD,
-}= process.env;
+} = process.env;

@@ -28,13 +28,10 @@ try {
 }
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-
 app.use('/api/v1', routes);
 app.use(errorHandler);
-
 app.set('view engine', 'ejs');
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.all('*', (req, res) => {
   res.render('NotFound')

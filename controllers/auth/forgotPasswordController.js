@@ -56,7 +56,7 @@ const forgotPasswordController = {
             discord.SendErrorMessageToDiscord(req.body.email, "forgot password", err);
             return next(CustomErrorHandler.serverError());
         }
-        res.status(201).json({ status: "success", msg: "Password updated Successfully !!!  " });
+        res.status(200).json({ status: "success", msg: "Password updated Successfully !!!  " });
 
     }
 }

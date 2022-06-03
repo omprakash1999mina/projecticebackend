@@ -1,30 +1,26 @@
 const router = express.Router();
 import express from "express";
 import auth from "../middleware/auth";
-import admin from "../middleware/admin";
-import {orderController, messagesController, registerController, loginController , userController, refreshController, productController} from '../controllers';
+import { loginController, userController, refreshController, loanStatusController, registerController, forgotPasswordController } from '../controllers';
+import otpController from "../controllers/auth/otpController";
 
-router.post('/register',registerController.register);
-router.post('/login',loginController.login);
-router.post('/message',messagesController.message);
-router.post('/refresh',refreshController.refresh);
-router.post('/logout',loginController.logout);
-router.post('/product',[auth , admin], productController.store);
-router.post('/orders',[auth], orderController.store );
+router.post('/apply/loan', [auth], loanStatusController.applyLoan);
+router.get('/getloans', loanStatusController.getAllLoans);
+router.get('/loan/:id', [auth], loanStatusController.getLoan);
+router.post('/loanrequest/accept', [auth], loanStatusController.accept);
+router.post('/loanrequest/reject', [auth], loanStatusController.reject);
+router.post('/loanrequest/negotiation', [auth], loanStatusController.negotiation);
+router.post('/loanrequest/update/loan', [auth], loanStatusController.updateLoan);
+router.post('/update/balance', [auth], loanStatusController.updateBalance);
 
-router.put('/product/:id',[auth , admin], productController.update);
-router.put('/update/:id',[ auth ], userController.update);
-
-router.delete('/product/:id',[auth , admin], productController.destroy);
-router.delete('/message/:id',[auth , admin], messagesController.destroy);
-router.get('/products', productController.getProductslist);
-router.get('/products/:id', productController.getProductsOne);
-router.get('/users/:id',[ auth ], userController.getUsersOne);
-router.get('/messages',[auth , admin], messagesController.getmessages);
-router.get('/orders/:id',[auth ], orderController.getorders);
-// router.get('/user/:id', productController.getProductsOne);
-router.post('/products/cart-items',productController.getProducts);
-router.post('/user',loginController.logout);
+router.post('/login', loginController.login);
+router.post('/forgot/password', forgotPasswordController.forgot);
+router.post('/register', registerController.register);
+router.post('/refresh', refreshController.refresh);
+router.post('/logout', loginController.logout);
+router.put('/update/:id', [auth], userController.update);
+router.get('/users/:id', [auth], userController.getUsersOne);
+router.post('/email/verify', otpController.send);
 
 export default router;
 

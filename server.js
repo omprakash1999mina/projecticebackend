@@ -1,4 +1,3 @@
-// "use strict";
 import express from 'express';
 import { DB_URL } from './config';
 import errorHandler from './middleware/errorHandler';

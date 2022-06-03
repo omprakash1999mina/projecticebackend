@@ -4,9 +4,9 @@ import CustomErrorHandler from '../../Services/CustomerrorHandler';
 import bcrypt from 'bcrypt';
 import JwtService from '../../Services/JwtService';
 import { REFRESH_SECRET } from '../../config';
-import discord from '../../../sodpro/Services/discord';
-import firebaseServices from '../../../sodpro/Services/firebaseConfig';
-import RedisService from '../../../sodpro/Services/redis';
+import discord from '../../Services/discord';
+import firebaseServices from '../../Services/firebaseConfig';
+import RedisService from '../../Services/redis';
 
 const registerController = {
 
@@ -79,6 +79,7 @@ const registerController = {
             access_token = JwtService.sign({ _id: document._id, role: document.role });
             refresh_token = JwtService.sign({ _id: document._id, role: document.role }, "600s", REFRESH_SECRET);
             //       redis caching
+        
             const ttl = 60 * 60 * 24 * 7;
             const redis = RedisService.createRedisClient();
             const working = await redis.set(document._id, refresh_token, "EX", ttl).then(() => {

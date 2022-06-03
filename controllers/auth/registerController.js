@@ -1,30 +1,30 @@
 import Joi from 'joi';
-import { User} from "../../models";
+import { User } from "../../models";
 import CustomErrorHandler from '../../Services/CustomerrorHandler';
 import bcrypt from 'bcrypt';
 import JwtService from '../../Services/JwtService';
-import { REFRESH_SECRET } from '../../config';
-import discord from '../../../sodpro/Services/discord';
-import firebaseServices from '../../../sodpro/Services/firebaseConfig';
-import RedisService from '../../../sodpro/Services/redis';
+import firebaseServices from '../../Services/firebaseConfig';
+import discord from '../../Services/discord';
+import RedisService from '../../Services/redis';
 
 const registerController = {
 
     async register(req, res, next) {
+
+        // validation
         const registerSchema = Joi.object({
-            name: Joi.string().min(3).max(100).required(),
-            gender: Joi.string().required(),
-            age: Joi.string().required(),
-            password: Joi.string().min(8).max(50).required(),
+            userName: Joi.string().min(3).max(100).required(),
             email: Joi.string().email().required(),
-            image: Joi.string().required(),
+            password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).max(50).required(),
+            profileImageLink: Joi.string().required(),
         });
-        let ok = false;
+
         const { error } = registerSchema.validate(req.body);
+        let ok = false;
+
         if (error) {
-            // Delete the uploaded file
-            if (req.body.image) {
-                ok = firebaseServices.DeleteFileInFirebase(req.body.image)
+            if (req.body.profileImageName) {
+                ok = firebaseServices.DeleteFileInFirebase(req.body.profileImageName)
             }
             // implimetation for discord error logs
             if (!ok) {
@@ -37,74 +37,49 @@ const registerController = {
             }
             return next(error);
         }
+        try {
+            const exist = await User.exists({ email: req.body.email });
+            if (exist) {
+                // implimetation for discord error logs
+                discord.SendErrorMessageToDiscord(req.body.email, "Register User", "error the email is already exist ");
+                return next(CustomErrorHandler.alreadyExist('This email is already taken . '));
+            }
+        } catch (err) {
+            return next(err);
+        }
+        const { userName, email, profileImageLink, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         let document;
-
         let access_token;
         let refresh_token;
 
         try {
-            const exist = await User.exists({ email: req.body.email });
-            if (exist) {
-                // Delete the uploaded file
-                if (req.body.image) {
-                    ok = firebaseServices.DeleteFileInFirebase(req.body.image)
-                }
-                // implimetation for discord error logs
-                if (!ok) {
-                    discord.SendErrorMessageToDiscord(req.body.email, "Register User", "error in deleting files in firebase !!");
-                    console.log("failed to deleting file")
-                }
-                else {
-                    discord.SendErrorMessageToDiscord(req.body.email, "Register User", error + " and All files deleted successfully");
-                    console.log("error accurs and all files deleted on firebase successfully")
-                }
-                return next(CustomErrorHandler.alreadyExist('This email is already taken . '));
-            }
-
-            const { name, email, password, age, gender, image } = req.body;
-            const hashedPassword = await bcrypt.hash(password, 10);
-
             document = await User.create({
-                // name: name,
-                name,
+                userName,
                 email,
-                age,
-                gender,
-                image,
+                profileImageLink,
                 password: hashedPassword
             });
             console.log(document);
 
-            access_token = JwtService.sign({ _id: document._id, role: document.role });
-            refresh_token = JwtService.sign({ _id: document._id, role: document.role }, "600s", REFRESH_SECRET);
+            access_token = JwtService.sign({ refresh_token: document._id });
+            refresh_token = JwtService.sign({ _id: document._id });
             //       redis caching
             const ttl = 60 * 60 * 24 * 7;
-            const redis = RedisService.createRedisClient();
-            const working = await redis.set(document._id, refresh_token, "EX", ttl).then(() => {
-                redis.disconnect();
-            });
+            const working = RedisService.createRedisClient().set(document._id, refresh_token, "EX", ttl);
             // const working = RedisService.set(email, refresh_token, ttl);
             if (!working) {
                 discord.SendErrorMessageToDiscord(email, "LogIN", "error in setup the otp in redis !!");
                 return next(CustomErrorHandler.serverError());
             }
+
         } catch (err) {
-            if (req.body.image) {
-                ok = firebaseServices.DeleteFileInFirebase(req.body.image)
-            }
-            // implimetation for discord error logs
-            if (!ok) {
-                discord.SendErrorMessageToDiscord(req.body.email, "Register User", "error in deleting files in firebase !!");
-                console.log("failed to deleting file")
-            }
-            else {
-                discord.SendErrorMessageToDiscord(req.body.email, "Register User", error + " and All files deleted successfully");
-                console.log("error accurs and all files deleted on firebase successfully")
-            }
+            discord.SendErrorMessageToDiscord(req.body.email, "Register User", err);
             return next(err);
         }
-        res.status(200).json({ _id: document._id, msg: "User Registered Successfully !!!  ", access_token: access_token, refresh_token: refresh_token });
+        res.status(201).json({ id: document._id, msg: "User Registered Successfully !!!  ", access_token: access_token, refresh_token: refresh_token });
+
     }
 };
 

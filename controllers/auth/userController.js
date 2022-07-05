@@ -2,6 +2,7 @@ import { User } from "../../models";
 import CustomErrorHandler from "../../Services/CustomerrorHandler";
 import bcrypt from 'bcrypt';
 import Joi from 'joi';
+import { UserValidation } from '../../validators';
 
 const userController = {
     async getUsersOne(req, res, next) {
@@ -17,17 +18,7 @@ const userController = {
     },
 
     async update(req, res, next) {
-        // validation
-        const updateSchema = Joi.object({
-            name: Joi.string().min(3).max(20).required(),
-            gender: Joi.string().required(),
-            age: Joi.string().required(),
-            password: Joi.string().min(8).required(),
-            email: Joi.string().email().required(),
-            image: Joi.string().max(500),
-        });
-
-        const { error } = updateSchema.validate(req.body);
+        const { error } = UserValidation.validate(req.body);
         if (error) {
             // Delete the uploaded file
 
@@ -64,7 +55,6 @@ const userController = {
             // console.log(document);
             if (req.file) {
                 // Delete the uploaded old file
-                
                 console.log("successfully deleted old file")
             }
 

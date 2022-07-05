@@ -5,17 +5,13 @@ import JwtService from '../../Services/JwtService';
 import { REFRESH_SECRET } from '../../config';
 import discord from '../../Services/discord';
 import RedisService from '../../Services/redis';
-
+import { RefreshValidation } from '../../validators';
 
 const refreshController = {
 
     async refresh(req, res, next) {
         // refresh  Logic
-
-        const refreshSchema = Joi.object({
-            refresh_token: Joi.string().required()
-        });
-        const { error } = refreshSchema.validate(req.body);
+        const { error } = RefreshValidation.validate(req.body);
 
         if (error) {
             return next(error);

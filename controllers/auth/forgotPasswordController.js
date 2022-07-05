@@ -4,18 +4,13 @@ import CustomErrorHandler from '../../Services/CustomerrorHandler';
 import bcrypt from 'bcrypt';
 import discord from '../../Services/discord';
 import RedisService from '../../Services/redis';
+import { ForgotPasswordValidation } from '../../validators';
 
 const forgotPasswordController = {
 
     async forgot(req, res, next) {
 
-        const forgotPasswordSchema = Joi.object({
-            email: Joi.string().required(),
-            otp: Joi.number().required(),
-            password: Joi.string().min(8).max(50).required()
-        });
-
-        const { error } = forgotPasswordSchema.validate(req.body);
+        const { error } = ForgotPasswordValidation.validate(req.body);
 
         if (error) {
             return next(CustomErrorHandler.badRequest());

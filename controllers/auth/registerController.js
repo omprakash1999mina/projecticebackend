@@ -7,20 +7,13 @@ import { REFRESH_SECRET } from '../../config';
 import discord from '../../Services/discord';
 import firebaseServices from '../../Services/firebaseConfig';
 import RedisService from '../../Services/redis';
+import { RegisterValidation } from '../../validators';
 
 const registerController = {
 
     async register(req, res, next) {
-        const registerSchema = Joi.object({
-            name: Joi.string().min(3).max(100).required(),
-            gender: Joi.string().required(),
-            age: Joi.string().required(),
-            password: Joi.string().min(8).max(50).required(),
-            email: Joi.string().email().required(),
-            image: Joi.string().required(),
-        });
         let ok = false;
-        const { error } = registerSchema.validate(req.body);
+        const { error } = RegisterValidation.validate(req.body);
         if (error) {
             // Delete the uploaded file
             if (req.body.image) {

@@ -1,76 +1,72 @@
 import Joi from 'joi';
-import { Message } from "../models";
+import { Message, User } from "../models";
 import CustomErrorHandler from '../Services/CustomerrorHandler';
+import discord from '../Services/discord';
+import { MessageValidation } from '../validators';
 
-
-const messagesController ={
-    async message(req,res, next){
-        const messageSchema = Joi.object({
-            name: Joi.string().required(),
-            email: Joi.string().email().required(),
-            message: Joi.string().required(),
-        });
-
-        const { error } = messageSchema.validate(req.body);
+const messagesController = {
+    async message(req, res, next) {
+        
+        const { error } = MessageValidation.validate(req.body);
         if (error) {
             return next(error);
-            // rootfolder/uploads/filename.png
         }
-        
-        const {name, email, message} = req.body;
 
-            let document;
-            
-            try {
+        const { name, email, message } = req.body;
+
+        let document;
+
+        try {
+            const exist = User.exists({ email });
+            if (exist) {
                 document = await Message.create({
-                // name: name,
-                name,
-
-                // email: email,
-                email,
-                message,
+                    name,
+                    email,
+                    message,
                 });
-                console.log(document);
-
-            } catch(err) {
-                return next(err);
             }
-
-            // res.redirect('/user');
-            res.status(201).json({msg: "Message posted Successfully !!!  "});
-
-            // res.json(document);
-
+            else {
+                discord.SendErrorMessageToDiscord(email, "contact us message", "user not found in db/not registered");
+                return next(CustomErrorHandler.badRequest("User not registered"));
+            }
+            // console.log(document);
+        } catch (err) {
+            discord.SendErrorMessageToDiscord(req.body.email, "contact us message", err);
+            return next(err);
+        }
+        res.status(201).json({ msg: "Message posted Successfully !!!  " });
     },
     async destroy(req, res, next) {
-        try{
-            const document = await Message.findOneAndRemove({_id: req.params.id});
-            if(!document){
+        try {
+            const document = await Message.findOneAndRemove({ _id: req.params.id });
+            if (!document) {
+                discord.SendErrorMessageToDiscord(req.params.id, "contact us message delete", "no such file in db for delete");
                 return next(new Error("No such data for Delete !!!   "));
             }
             res.status(200).json("Successfully deleted");
-        }catch(err){
+        } catch (err) {
+            discord.SendErrorMessageToDiscord(req.params.id, "contact us message delete", err);
             return next(CustomErrorHandler.serverError());
         }
-        
+
     },
     async getmessages(req, res, next) {
-            
+
         //  use pagination here for big data library is mongoose pagination
         let document;
 
-        try{
+        try {
             // document = await Product.find().select('-updatedAt -__v -createdAt').sort({_id: -1});
 
             document = await Message.find().select('-__v -updatedAt');
 
-        }catch(err){
+        } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
         res.json(document);
 
     }
-    
+
 }
 export default messagesController;
 

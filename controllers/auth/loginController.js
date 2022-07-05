@@ -6,20 +6,14 @@ import JwtService from '../../Services/JwtService';
 import { REFRESH_SECRET } from '../../config';
 import discord from '../../Services/discord';
 import RedisService from '../../Services/redis';
+import { loginValidation } from '../../validators';
 
 const loginController = {
 
     async login(req, res, next) {
         // validation
-        const loginSchema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
-        });
-        // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$@')).required(),
-
         console.log(req.body);
-
-        const { error } = loginSchema.validate(req.body);
+        const { error } = loginValidation.validate(req.body);
         if (error) {
             return next(error);
         }

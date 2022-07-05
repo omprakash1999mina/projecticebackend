@@ -6,16 +6,12 @@ import RedisService from '../../Services/redis';
 import mailService from '../../Services/sendMail';
 import { EMAIL_ADMIN_ID, EMAIL_ADMIN_PASSWORD, EMAIL_API_URL } from '../../config'
 import axios from "axios";
+import { OtpValidation } from '../../validators';
 
 const otpController = {
 
     async send(req, res, next) {
-
-        const otpSchema = Joi.object({
-            email: Joi.string().email().required(),
-        });
-
-        const { error } = otpSchema.validate(req.body);
+        const { error } = OtpValidation.validate(req.body);
 
         if (error) {
             return next(CustomErrorHandler.badRequest());

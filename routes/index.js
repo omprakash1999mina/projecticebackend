@@ -8,7 +8,7 @@ router.post('/email/verify', otpController.send);
 router.post('/forgot/password', forgotPasswordController.forgot);
 router.post('/login', loginController.login);
 router.post('/register', registerController.register);
-router.post('/message', messagesController.message);
+router.post('/message', messagesController.createMessage);
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', loginController.logout);
 router.post('/product', [auth, admin], productController.store);

@@ -5,7 +5,7 @@ import discord from '../Services/discord';
 import { MessageValidation } from '../validators';
 
 const messagesController = {
-    async message(req, res, next) {
+    async createMessage(req, res, next) {
         
         const { error } = MessageValidation.validate(req.body);
         if (error) {
@@ -17,7 +17,8 @@ const messagesController = {
         let document;
 
         try {
-            const exist = User.exists({ email });
+            const exist = await User.exists({ email });
+            // console.log(exist)
             if (exist) {
                 document = await Message.create({
                     name,

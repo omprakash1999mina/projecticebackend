@@ -4,7 +4,7 @@
   "description": "Rest Apis project developed by Om Prakash Bairwa [Royal_IITian] ",
   "main": "server.js",
   "engines": {
-    "node": "14.18.0",
+    "node": ">=14.18.0",
     "npm": "6.14.15"
   },
   "scripts": {

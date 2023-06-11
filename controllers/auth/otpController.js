@@ -33,12 +33,12 @@ const otpController = {
             }
             // sending mail to user
             let success;
-            const data = { userName: `${user.userName}`, type, otp: otp.toString(), email: `${email}`, subject: "Regarding OTP", company: "OP Developers", adminId: `${EMAIL_ADMIN_ID}`, password: `${EMAIL_ADMIN_PASSWORD}` }
+            const data = { userName: `${user.userName}`, type, otp: otp.toString(), email: `${email}`, subject: "Regarding OTP", company: "OP Developers", adminId: `${EMAIL_ADMIN_ID}`, password: `${EMAIL_ADMIN_PASSWORD}`,lenderName:"",lenderEmail:"" }
             await axios.post(EMAIL_API_URL, data, config).then((res) => {
                 success = true;
             }).catch((err) => {
                 success = false;
-                console.log(err.response.data)
+                // console.log(err.response.data)
                 discord.SendErrorMessageToDiscord(email, "Send Mail", err);
                 console.log("error in sending mail to :" + email)
             });

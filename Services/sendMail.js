@@ -25,7 +25,7 @@ const mailService = {
         await axios.post(EMAIL_API_URL, data, config).then((res) => {
             return true;
         }).catch((err) => {
-            // console.log(err)
+            console.log(err)
             discord.SendErrorMessageToDiscord(email, "Send Mail", err);
             console.log("error in sending mail to :" + email)
             return false;

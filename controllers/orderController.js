@@ -70,6 +70,5 @@ const orderController = {
         res.json(document);
 
     }
-
 }
 export default orderController;

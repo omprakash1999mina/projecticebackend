@@ -50,6 +50,7 @@ const loginController = {
             return next(CustomErrorHandler.serverError());
         }
     },
+    
     async logout(req, res, next) {
         // validation
         const refreshSchema = Joi.object({

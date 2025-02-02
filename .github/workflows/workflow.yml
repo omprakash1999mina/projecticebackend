@@ -12,4 +12,4 @@ jobs:
         run: |
           curl -X POST "https://proud-colt-52684.upstash.io" \
           -H "Authorization: Bearer ${{ secrets.UPSTASH_REDIS_TOKEN }}" \
-          -d "SET keep_alive $(date +\%s) EX 60"
+          -d "SET test active EX 60"
